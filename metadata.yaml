@@ -1,0 +1,26 @@
+name: prometheus-zfs-exporter
+summary: >
+    Export zfs metrics to Prometheus.
+
+maintainers:
+    - Dwellir AB <info@dwellir.com>
+    - Erik Lönroth <erik@dwellir.com>
+
+description: >
+    Prometheus exporter for zfs. https://github.com/pdf/zfs_exporter
+
+tags:
+    - monitoring
+    - prometheus
+    - exporter
+
+subordinate: true
+
+requires:
+  juju-info:
+    interface: juju-info
+    scope: container
+
+provides:
+  prometheus:
+    interface: prometheus

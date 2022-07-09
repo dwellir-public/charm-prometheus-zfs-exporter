@@ -1,0 +1,9 @@
+version
+.idea/
+*charm
+build
+.tox
+.build
+__pycache__/
+*.py[cod]
+.coverage

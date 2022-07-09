@@ -1,0 +1,13 @@
+[Unit]
+Description=Zfs Exporter
+After=network.target
+
+[Service]
+Type=simple
+User=zfs_exporter
+Group=zfs_exporter
+EnvironmentFile=/etc/sysconfig/zfs_exporter
+ExecStart=/usr/bin/zfs_exporter $OPTIONS
+
+[Install]
+WantedBy=multi-user.target

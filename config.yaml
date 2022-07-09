@@ -1,0 +1,10 @@
+options:
+  zfs-exporter-version:
+    type: string
+    default: "2.2.5"
+    description: >
+      The node-exporter version to install.
+  listen-address:
+    type: string
+    default: "0.0.0.0:9134"
+    description: The address to listen to.
