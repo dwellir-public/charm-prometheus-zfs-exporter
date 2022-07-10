@@ -50,9 +50,10 @@ class ZfsExporterCharm(CharmBase):
     def _on_install(self, event):
         logger.debug("## Installing charm")
         self.unit.status = MaintenanceStatus("Installing zfs-exporter")
+        la = self.config.get('listen-address')
+        zev = self.model.config.get("zfs-exporter-version")
+        _install_node_exporter(version=zev, listen_address=la)
         self._set_charm_version()
-        _install_node_exporter(self.model.config.get("zfs-exporter-version"))
-
         self.unit.status = ActiveStatus("zfs-exporter installed")
 
     def _on_upgrade_charm(self, event):
@@ -95,11 +96,11 @@ class ZfsExporterCharm(CharmBase):
         self.unit.set_workload_version(version)
 
 
-def _install_node_exporter(version: str, arch: str = "amd64"):
+def _install_node_exporter(version: str, arch: str = "amd64", listen_address: str = "0.0.0.0:9134"):
     """Download appropriate files and install node-exporter.
 
     This function downloads the package, extracts it to /usr/bin/, create
-    node-exporter user and group, and creates the systemd service unit.
+    node-exporter user and group, and creates the systemd service unit with listen-address.
 
     Args:
         version: a string representing the version to install.
@@ -129,8 +130,7 @@ def _install_node_exporter(version: str, arch: str = "amd64"):
 
     _create_node_exporter_user_group()
     _create_systemd_service_unit()
-    la = str(self.config.get('listen-address'))
-    _render_sysconfig({"listen_address": la})
+    _render_sysconfig({"listen_address": listen_address})
 
 
 def _uninstall_node_exporter():
