@@ -20,10 +20,14 @@ from jinja2 import Environment, FileSystemLoader
 from ops.charm import CharmBase
 from ops.main import main
 from ops.model import ActiveStatus, MaintenanceStatus
+from charms.prometheus_k8s.v0.prometheus_scrape import MetricsEndpointProvider
 
 from prometheus_zfs_exporter import Prometheus
 
 logger = logging.getLogger(__name__)
+
+SCRAPE_JOB_NAME = "zfs-exporter"
+METRICS_ENDPOINT_RELATION_NAME = "metrics-endpoint"
 
 
 class ZfsExporterCharm(CharmBase):
@@ -34,6 +38,18 @@ class ZfsExporterCharm(CharmBase):
         super().__init__(*args)
 
         self.prometheus = Prometheus(self, "prometheus")
+        self.metrics_endpoint = MetricsEndpointProvider(
+            self,
+            relation_name=METRICS_ENDPOINT_RELATION_NAME,
+            jobs=[
+                {
+                    "job_name": SCRAPE_JOB_NAME,
+                    "metrics_path": "/metrics",
+                    "static_configs": [{"targets": ["*:9134"]}],
+                }
+            ],
+            forward_alert_rules=False,
+        )
 
         # juju core hooks
         self.framework.observe(self.on.install, self._on_install)
